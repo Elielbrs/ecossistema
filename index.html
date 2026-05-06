@@ -6,6 +6,7 @@
 <title>EletroUni</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%236378ff'/%3E%3Cstop offset='1' stop-color='%23a855f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M20 18h24v6H26v8h16v6H26v8h18v6H20z' fill='white'/%3E%3C/svg%3E"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
 <style>
 /* ═══════════════════════════════════════════ TOKENS ═══════════════════════════════════════════ */
 :root {
@@ -493,16 +494,16 @@ select:focus-visible{
   <!-- Tabs -->
   <nav class="tab-bar z" style="max-width:1100px;margin:0 auto;">
     <button class="tab-btn active" id="tab-btn-devices" onclick="switchTab('devices',this)">
-      📱 Meus Dispositivos
+      <i class="bi bi-phone"></i> Meus Dispositivos
     </button>
     <button class="tab-btn" id="tab-btn-new" onclick="switchTab('new',this)">
-      ➕ Novo Aparelho
+      <i class="bi bi-plus-circle"></i> Novo Aparelho
     </button>
     <button class="tab-btn" id="tab-btn-monitor" onclick="switchTab('monitor',this)" style="display:none;">
-      📊 Monitoramento
+      <i class="bi bi-bar-chart"></i> Monitoramento
     </button>
     <button class="tab-btn" id="tab-btn-sim" onclick="switchTab('sim',this)" style="display:none;">
-      🤖 Simulador IA
+      <i class="bi bi-cpu"></i> Simulador IA
       <span class="badge badge-violet" style="font-size:.52rem;padding:1px 6px;">Admin</span>
     </button>
   </nav>
@@ -623,7 +624,7 @@ select:focus-visible{
             <rect x="5" y="2" width="14" height="20" rx="2"/>
             <path d="M9 7h6M9 11h6M9 15h4"/>
           </svg>
-          <p>Nenhum aparelho cadastrado ainda.<br/>Vá para a aba <strong style="color:var(--blue)">➕ Novo Aparelho</strong>.</p>
+          <p>Nenhum aparelho cadastrado ainda.<br/>Vá para a aba <strong style="color:var(--blue)"><i class="bi bi-plus-circle"></i> Novo Aparelho</strong>.</p>
         </div>
       </div>
     </div>
@@ -1314,8 +1315,14 @@ function switchTab(id, btn) {
 // CADASTRO DE EQUIPAMENTO
 // ══════════════════════════════════════════════════════════════════
 const ICONS = {
-  'Cozinha':'🍳','Sala':'🛋️','Quarto':'🛏️','Escritório':'💼',
-  'Banheiro':'🚿','Área de Serviço':'🧺','Garagem':'🚗','Sala de Reuniões':'📋'
+  'Cozinha':'<i class="bi bi-fire"></i>',
+  'Sala':'<i class="bi bi-sofa"></i>',
+  'Quarto':'<i class="bi bi-door-closed"></i>',
+  'Escritório':'<i class="bi bi-briefcase"></i>',
+  'Banheiro':'<i class="bi bi-droplet"></i>',
+  'Área de Serviço':'<i class="bi bi-water"></i>',
+  'Garagem':'<i class="bi bi-car-front"></i>',
+  'Sala de Reuniões':'<i class="bi bi-clipboard-check"></i>'
 };
 
 function getEquipPayload() {
@@ -1408,7 +1415,7 @@ async function cadastrarEquip() {
     clearEquipForm(false);
 
   } catch (err) {
-    st.style.color = 'var(--red)'; st.textContent = '✗ ' + err.message;
+    st.style.color = 'var(--red)'; st.innerHTML = '<i class="bi bi-x-circle-fill"></i> ' + err.message;
     addLog('error', 'Cadastro falhou: ' + err.message);
     toast('Erro: ' + err.message, 'error');
   } finally {
@@ -1563,7 +1570,7 @@ function renderDevicesGrid() {
         <rect x="5" y="2" width="14" height="20" rx="2"/>
         <path d="M9 7h6M9 11h6M9 15h4"/>
       </svg>
-      <p>Nenhum aparelho ainda.<br/>Cadastre na aba <strong style="color:var(--blue)">➕ Novo Aparelho</strong>.</p>
+      <p>Nenhum aparelho ainda.<br/>Cadastre na aba <strong style="color:var(--blue)"><i class="bi bi-plus-circle"></i> Novo Aparelho</strong>.</p>
       <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="addSampleDevices()">Adicionar exemplos</button>
     </div>`;
     return;
@@ -1591,7 +1598,7 @@ function renderDevicesGrid() {
     <div class="glass dev-card anim-rise" style="animation-delay:${i*.06}s;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div style="font-size:1.5rem;">${ICONS[d.comodo]||'🔌'}</div>
+          <div style="font-size:1.5rem;">${ICONS[d.comodo]||'<i class="bi bi-plug"></i>'}</div>
           <div>
             <div style="font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:3px;">${d.nome}</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -1815,7 +1822,7 @@ async function simTelemetria() {
     }, 'tele');
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
-    setSimStatus('ok', '✅ Dados recebidos!');
+    setSimStatus('ok', '<i class="bi bi-check-circle-fill" style="color:var(--green);"></i> Dados recebidos!');
     addLog('success', `Telemetria enviada — ${payload.dispositivo} · ${payload.consumo_w}W`);
 
     // ── Lê resposta (analisar) ─────────────────────────────────────
@@ -1845,7 +1852,7 @@ async function simTelemetria() {
     }
 
   } catch (err) {
-    setSimStatus('err', '✗ ' + err.message);
+    setSimStatus('err', '<i class="bi bi-x-circle-fill" style="color:var(--red);"></i> ' + err.message);
     addLog('error', 'Telemetria falhou: ' + err.message);
     iaError(err.message);
     toast('Erro: ' + err.message, 'error');
@@ -1977,7 +1984,7 @@ function iaError(msg) {
   document.getElementById('ia-thinking').style.display= 'none';
   document.getElementById('ia-result').style.display  = 'none';
   document.getElementById('ia-err').style.display     = 'block';
-  document.getElementById('ia-err-txt').textContent   = '✗ ' + msg;
+  document.getElementById('ia-err-txt').innerHTML   = '<i class="bi bi-x-circle-fill"></i> ' + msg;
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -2008,7 +2015,7 @@ function showUndoToast(msg, onUndo) {
 
   const el = document.createElement('div');
   el.className = 'toast toast-info';
-  el.innerHTML = `<span>↩</span><span>${msg}</span>` +
+  el.innerHTML = `<span><i class="bi bi-arrow-counterclockwise"></i></span><span>${msg}</span>` +
     `<button class="btn btn-outline btn-xs" type="button" style="margin-left:auto;">Desfazer</button>`;
 
   const cleanup = () => {
@@ -2037,9 +2044,9 @@ function showUndoToast(msg, onUndo) {
 function toast(msg, type='info') {
   const wrap = document.getElementById('toasts');
   const el   = document.createElement('div');
-  const icon = {success:'✅',error:'✗',warn:'⚠',info:'ℹ'}[type]||'ℹ';
+  const icon = {success:'<i class="bi bi-check-circle-fill"></i>',error:'<i class="bi bi-x-circle-fill"></i>',warn:'<i class="bi bi-exclamation-triangle-fill"></i>',info:'<i class="bi bi-info-circle-fill"></i>'}[type]||'<i class="bi bi-info-circle-fill"></i>';
   el.className = `toast toast-${type}`;
-  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  el.innerHTML = typeof icon === 'string' && icon.includes('<') ? `${icon}<span>${msg}</span>` : `<span>${icon}</span><span>${msg}</span>`;
   wrap.appendChild(el);
   setTimeout(()=>{
     el.style.opacity='0'; el.style.transform='translateX(20px)';
