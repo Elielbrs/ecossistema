@@ -1696,6 +1696,86 @@ function simularGasto(id, watts) {
 
   costDiv.style.display = 'block';
   addLog('info', `Gasto simulado: ${watts}W × ${hrs}h = R$ ${custo.toFixed(4)}`);
+
+  // ── Enviar telemetria e obter insight da IA ──────────────────
+  enviarTelemetriaDispositivo(id, watts, hrs);
+}
+
+async function enviarTelemetriaDispositivo(deviceId, watts, hrs) {
+  const url = URL_TELEMETRIA;
+  if (!url || !url.startsWith('http')) {
+    toast('Configure URL_TELEMETRIA no código.', 'warn');
+    return;
+  }
+
+  const device = App.devices.find(d => d.id === deviceId);
+  if (!device) return;
+
+  // Preparar payload de telemetria
+  const payload = {
+    tipo:       'telemetria_iot',
+    email:      App.user?.email || '',
+    dispositivo: device.nome,
+    voltagem:   device.tensao === 'Bivolt' ? 220 : parseInt(device.tensao),
+    consumo_w:  watts,
+    status:     'Ativo',
+    timestamp:  new Date().toISOString(),
+    idempotency_key: makeIdempotencyKey('tele'),
+    metadata: {
+      origem:              'EletroUni — Dispositivo Real',
+      horas_simuladas:     hrs,
+      comodo:              device.comodo,
+      corrente_a:          parseFloat((watts / 220).toFixed(2)),
+      fator_potencia:      0.92,
+      kwh_estimado_hora:   parseFloat((watts / 1000).toFixed(3)),
+    },
+  };
+
+  iaThinking();
+  updateMonKPIs(watts);
+  switchMonStatus('active');
+
+  try {
+    // ── POST ──────────────────────────────────────────────────────
+    const res = await fetchWithTiming(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    }, 'tele');
+
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    addLog('success', `Telemetria enviada — ${device.nome} · ${watts}W`);
+
+    // ── Lê resposta (analisar) ─────────────────────────────────────
+    let insight = null;
+    try {
+      const raw = await res.text();
+      if (raw && raw.trim()) {
+        try {
+          const parsed = JSON.parse(raw);
+          const fields = ['analisar','insight','message','texto','resultado','output','text'];
+          for (const f of fields) { if (parsed[f] && typeof parsed[f]==='string') { insight=parsed[f]; break; } }
+          if (!insight) insight = JSON.stringify(parsed, null, 2);
+        } catch { insight = raw.trim(); }
+      }
+    } catch {}
+
+    iaResult(insight, device.nome, watts);
+    toast(`${device.nome} · ${watts}W · IA respondeu`, 'success');
+
+    // Troca para aba Monitoramento automaticamente
+    const monBtn = document.getElementById('tab-btn-monitor');
+    if (monBtn && App.user?.isAdmin) {
+      switchTab('monitor', monBtn);
+    }
+
+  } catch (err) {
+    iaError(err.message);
+    addLog('error', 'Telemetria falhou: ' + err.message);
+    toast('Erro: ' + err.message, 'error');
+    switchMonStatus('error');
+  }
 }
 
 function removeDevice(id) {
