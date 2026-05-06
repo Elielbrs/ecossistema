@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EletroUni</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%236378ff'/%3E%3Cstop offset='1' stop-color='%23a855f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Cpath d='M20 18h24v6H26v8h16v6H26v8h18v6H20z' fill='white'/%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════ TOKENS ═══════════════════════════════════════════ */
+:root {
+  --bg:       #04060e;
+  --bg2:      #070a16;
+  --surf:     rgba(10,14,30,0.75);
+  --surf2:    rgba(14,18,40,0.85);
+  --b:        rgba(99,120,255,0.14);
+  --bhi:      rgba(99,120,255,0.38);
+  --blue:     #6378ff;
+  --blue2:    #4f68e8;
+  --violet:   #a855f7;
+  --violet2:  #7c3aed;
+  --cyan:     #22d3ee;
+  --green:    #4ade80;
+  --amber:    #fbbf24;
+  --red:      #f87171;
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --dim:      #1e293b;
+  --r:        14px;
+  --r-sm:     10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  font-family:'Space Grotesk',sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+/* mesh */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 90% 55% at 5% 0%,   rgba(99,120,255,.13) 0%,transparent 60%),
+    radial-gradient(ellipse 65% 45% at 95% 100%, rgba(168,85,247,.11) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 35% at 50% 50%,  rgba(34,211,238,.05) 0%,transparent 70%);
+}
+/* grid */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(99,120,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(99,120,255,.035) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+
+/* ═══════════ LAYOUT ═══════════ */
+.z{position:relative;z-index:10}
+
+/* ═══════════ GLASS CARDS ═══════════ */
+.glass{
+  background:var(--surf);
+  backdrop-filter:blur(22px) saturate(1.5);
+  -webkit-backdrop-filter:blur(22px) saturate(1.5);
+  border:1px solid var(--b);
+  border-radius:var(--r);
+}
+.glass-hi{
+  background:var(--surf2);
+  backdrop-filter:blur(26px) saturate(1.6);
+  -webkit-backdrop-filter:blur(26px) saturate(1.6);
+  border:1px solid var(--bhi);
+  border-radius:var(--r);
+}
+
+/* ═══════════ TYPOGRAPHY ═══════════ */
+.mono{font-family:'JetBrains Mono',monospace}
+.label{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.grad-text{
+  background:linear-gradient(90deg,var(--blue),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.grad-text2{
+  background:linear-gradient(90deg,var(--cyan),var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* ═══════════ BUTTONS ═══════════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 22px;border-radius:var(--r-sm);border:none;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.03em;
+  transition:transform .15s,box-shadow .2s,opacity .15s;
+  white-space:nowrap;position:relative;overflow:hidden;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none!important}
+.btn-grad{
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  color:#fff;
+  box-shadow:0 0 26px rgba(99,120,255,.35),0 4px 18px rgba(0,0,0,.45);
+}
+.btn-grad:hover{box-shadow:0 0 40px rgba(99,120,255,.55),0 6px 22px rgba(0,0,0,.5)}
+.btn-grad2{
+  background:linear-gradient(135deg,var(--violet),var(--violet2));
+  color:#fff;
+  box-shadow:0 0 22px rgba(168,85,247,.3),0 4px 16px rgba(0,0,0,.4);
+}
+.btn-outline{
+  background:transparent;color:var(--muted);
+  border:1px solid var(--b);
+}
+.btn-outline:hover{color:var(--text);border-color:var(--bhi)}
+.btn-green{
+  background:rgba(74,222,128,.12);color:var(--green);
+  border:1px solid rgba(74,222,128,.3);
+}
+.btn-green:hover{background:rgba(74,222,128,.2);box-shadow:0 0 16px rgba(74,222,128,.25)}
+.btn-red{
+  background:rgba(248,113,113,.1);color:var(--red);
+  border:1px solid rgba(248,113,113,.28);
+}
+.btn-red:hover{background:rgba(248,113,113,.18)}
+.btn-sm{padding:7px 14px;font-size:.74rem}
+.btn-xs{padding:5px 11px;font-size:.68rem}
+.btn:focus-visible,
+.link-btn:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible{
+  outline:2px solid var(--blue);
+  outline-offset:2px;
+}
+/* link button */
+.link-btn{
+  background:none;border:none;cursor:pointer;padding:0;
+  color:var(--blue);font-size:.72rem;letter-spacing:.02em;
+}
+.link-btn:hover{color:var(--text)}
+/* shimmer */
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.12) 50%,transparent 60%);
+  transform:translateX(-100%);transition:transform 0s;
+}
+.btn:hover::after{transform:translateX(100%);transition:transform .5s}
+
+/* ═══════════ INPUTS ═══════════ */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{
+  background:rgba(4,6,14,.85);
+  border:1px solid var(--b);
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.83rem;border-radius:var(--r-sm);
+  padding:11px 14px;outline:none;width:100%;
+  transition:border-color .2s,box-shadow .2s;
+}
+.field input:focus,.field select:focus{
+  border-color:rgba(99,120,255,.5);
+  box-shadow:0 0 0 3px rgba(99,120,255,.1);
+}
+.field input::placeholder{color:var(--dim)}
+.field input[type=password]{letter-spacing:.1em}
+.field .err{font-size:.62rem;color:var(--red);display:none;margin-top:2px}
+.field.invalid input,.field.invalid select{border-color:rgba(248,113,113,.5)}
+.field.invalid .err{display:block}
+
+/* ═══════════ BADGES ═══════════ */
+.badge{
+  display:inline-flex;align-items:center;
+  padding:2px 9px;border-radius:20px;
+  font-size:.6rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase
+}
+.badge-blue  {background:rgba(99,120,255,.14); color:var(--blue);  border:1px solid rgba(99,120,255,.28)}
+.badge-violet{background:rgba(168,85,247,.14); color:var(--violet);border:1px solid rgba(168,85,247,.28)}
+.badge-green {background:rgba(74,222,128,.14); color:var(--green); border:1px solid rgba(74,222,128,.28)}
+.badge-amber {background:rgba(251,191,36,.14); color:var(--amber); border:1px solid rgba(251,191,36,.28)}
+.badge-red   {background:rgba(248,113,113,.14);color:var(--red);   border:1px solid rgba(248,113,113,.28)}
+.badge-cyan  {background:rgba(34,211,238,.14); color:var(--cyan);  border:1px solid rgba(34,211,238,.28)}
+
+/* ═══════════ DOTS ═══════════ */
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-blue  {background:var(--blue);  animation:pDot 2s infinite;box-shadow:0 0 7px var(--blue)}
+.dot-green {background:var(--green); animation:pDot 2s infinite;box-shadow:0 0 7px var(--green)}
+.dot-violet{background:var(--violet);animation:pDot 2s infinite;box-shadow:0 0 7px var(--violet)}
+.dot-amber {background:var(--amber)}
+.dot-dim   {background:var(--dim)}
+
+/* ═══════════ TABS ═══════════ */
+.tab-bar{
+  display:flex;gap:2px;
+  background:rgba(4,6,14,.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b);
+  padding:0 18px;
+  overflow-x:auto;
+}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:13px 16px;
+  font-size:.78rem;font-weight:500;color:var(--muted);
+  border:none;background:none;cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;
+  transition:color .2s,border-color .2s;flex-shrink:0;
+}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:fadeUp .3s cubic-bezier(.16,1,.3,1)}
+
+/* ═══════════ KPI CARDS ═══════════ */
+.kpi{padding:20px 22px;position:relative;overflow:hidden}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent,var(--blue)),transparent);
+  opacity:.55;
+}
+.kpi-val{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.85rem;font-weight:700;line-height:1;
+  margin:8px 0 4px;
+  transition:all .4s cubic-bezier(.16,1,.3,1);
+}
+.kpi-sub{font-size:.63rem;color:var(--muted)}
+
+/* ═══════════ IA INSIGHT ═══════════ */
+.insight-card{
+  padding:22px 24px;position:relative;overflow:hidden;min-height:86px;
+}
+.insight-card::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--blue),var(--violet));
+}
+.thinking-dots span{
+  display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--blue);margin:0 2px;
+  animation:dotBounce 1.2s ease-in-out infinite;
+}
+.thinking-dots span:nth-child(2){animation-delay:.2s}
+.thinking-dots span:nth-child(3){animation-delay:.4s}
+
+/* ═══════════ DEVICE CARDS ═══════════ */
+.dev-card{
+  padding:18px 20px;position:relative;overflow:hidden;
+  transition:border-color .25s,transform .2s,box-shadow .2s;
+}
+.dev-card:hover{
+  border-color:rgba(99,120,255,.35);
+  transform:translateY(-2px);
+  box-shadow:0 0 30px rgba(99,120,255,.12),0 8px 30px rgba(0,0,0,.5);
+}
+.dev-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(99,120,255,.4),transparent);
+  opacity:0;transition:opacity .25s;
+}
+.dev-card:hover::before{opacity:1}
+.cost-result{
+  margin-top:14px;padding:12px 16px;border-radius:var(--r-sm);
+  background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.22);
+  display:none;animation:fadeUp .3s forwards;
+}
+
+/* ═══════════ LOGIN SCREEN ═══════════ */
+#login-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:20px;position:relative;z-index:10;
+}
+.login-card{
+  width:100%;max-width:420px;padding:40px 36px;
+  box-shadow:0 0 60px rgba(99,120,255,.15),0 20px 60px rgba(0,0,0,.7);
+}
+.login-logo{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,rgba(99,120,255,.25),rgba(168,85,247,.25));
+  border:1px solid rgba(99,120,255,.38);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;
+}
+.tab-toggle{
+  display:flex;background:rgba(4,6,14,.8);border:1px solid var(--b);
+  border-radius:var(--r-sm);padding:4px;margin-bottom:26px;
+}
+.tab-toggle button{
+  flex:1;padding:9px;font-size:.78rem;font-weight:600;
+  border:none;background:none;color:var(--muted);cursor:pointer;
+  border-radius:7px;transition:all .2s;
+}
+.tab-toggle button.active{
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  color:#fff;box-shadow:0 0 16px rgba(99,120,255,.4);
+}
+
+/* ═══════════ SCROLLBAR ═══════════ */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--dim);border-radius:4px}
+
+/* ═══════════ TOASTS ═══════════ */
+.toast{
+  pointer-events:auto;padding:12px 16px;border-radius:var(--r-sm);
+  font-size:.75rem;display:flex;align-items:center;gap:10px;
+  backdrop-filter:blur(20px);
+  box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:320px;
+  animation:slideIn .4s cubic-bezier(.16,1,.3,1) forwards;
+}
+.toast-success{background:rgba(74,222,128,.1); border:1px solid rgba(74,222,128,.3); color:var(--green)}
+.toast-error  {background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red)}
+.toast-info   {background:rgba(99,120,255,.1); border:1px solid rgba(99,120,255,.3); color:var(--blue)}
+.toast-warn   {background:rgba(251,191,36,.1); border:1px solid rgba(251,191,36,.3); color:var(--amber)}
+
+/* ═══════════ MODAL ═══════════ */
+.modal-backdrop{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(4,6,14,.78);z-index:100;padding:20px;
+}
+.modal-card{width:100%;max-width:420px;padding:24px}
+
+/* ═══════════ EMPTY STATES ═══════════ */
+.empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px;gap:10px;color:var(--dim);text-align:center;
+}
+.empty svg{opacity:.25}
+.empty p{font-size:.72rem;line-height:1.65}
+
+/* ═══════════ KEYFRAMES ═══════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pDot{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes dotBounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1.1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes flicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.3}94%{opacity:1}96%{opacity:.6}97%{opacity:1}}
+@keyframes scan{from{transform:translateY(-100%)}to{transform:translateY(600%)}}
+@keyframes shimmerBg{from{background-position:200% 0}to{background-position:-200% 0}}
+
+.anim-rise{opacity:0;animation:rise .5s cubic-bezier(.16,1,.3,1) forwards}
+.s1{animation-delay:.05s}.s2{animation-delay:.1s}.s3{animation-delay:.15s}
+.s4{animation-delay:.2s}.s5{animation-delay:.25s}.s6{animation-delay:.3s}
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media(max-width:640px){
+  .login-card{padding:28px 20px}
+  .kpi-val{font-size:1.5rem}
+  .tab-btn{padding:12px 11px;font-size:.73rem}
+  .dev-card{padding:14px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ LOGIN SCREEN ═══════════════════════════════ -->
+<div id="login-screen">
+  <div class="glass-hi login-card">
+
+    <div class="login-logo">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M12 2L4 12h7l-2 8 11-12h-7l2-6z" fill="url(#lg1)"/>
+        <defs>
+          <linearGradient id="lg1" x1="4" y1="2" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#6378ff"/><stop offset="1" stop-color="#a855f7"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <h1 style="text-align:center;font-size:1.5rem;font-weight:800;margin-bottom:4px;"
+      class="grad-text">EletroUni</h1>
+    <p style="text-align:center;font-size:.72rem;color:var(--muted);margin-bottom:24px;">
+      Gestão Inteligente de Consumo IoT
+    </p>
+
+    <!-- Toggle login/signup -->
+    <div class="tab-toggle">
+      <button id="toggle-login" class="active" onclick="setAuthMode('login')">Entrar</button>
+      <button id="toggle-signup" onclick="setAuthMode('signup')">Criar Conta</button>
+    </div>
+
+    <!-- Login fields -->
+    <div id="auth-fields" style="display:flex;flex-direction:column;gap:16px;margin-bottom:22px;">
+      <div class="field" id="wrap-signup-name" style="display:none;">
+        <label>Nome Completo</label>
+        <input type="text" id="auth-name" placeholder="Seu nome"/>
+      </div>
+      <div class="field" id="wrap-auth-email">
+        <label>E-mail</label>
+        <input type="text" id="auth-email" placeholder="seu@email.com"/>
+        <span class="err">E-mail inválido.</span>
+      </div>
+      <div class="field" id="wrap-auth-pass">
+        <label>Senha</label>
+        <div style="position:relative;">
+          <input type="password" id="auth-pass" placeholder="••••••••" style="padding-right:44px;"/>
+          <button onclick="togglePassVis()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);
+            background:none;border:none;cursor:pointer;color:var(--muted);" title="Mostrar senha">
+            <svg id="eye-icon" width="16" height="16" viewBox="0 0 20 20" fill="none">
+              <path d="M1 10s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z" stroke="currentColor" stroke-width="1.4"/>
+              <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+          </button>
+        </div>
+        <span class="err">Use no minimo 6 caracteres.</span>
+      </div>
+    </div>
+
+    <div id="forgot-wrap" style="text-align:right;margin-top:-6px;margin-bottom:16px;">
+      <button type="button" class="link-btn" onclick="openForgot()">Esqueci minha senha</button>
+    </div>
+
+    <button class="btn btn-grad" id="btn-auth" onclick="submitAuth()"
+      style="width:100%;padding:13px;font-size:.85rem;">
+      <span id="btn-auth-txt">Entrar</span>
+    </button>
+
+    <div id="auth-error" style="margin-top:14px;padding:10px 14px;border-radius:8px;
+      background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.28);
+      font-size:.72rem;color:var(--red);display:none;text-align:center;"></div>
+
+    <p style="text-align:center;font-size:.65rem;color:var(--dim);margin-top:20px;">
+      Admin demo: <span style="color:var(--blue);font-family:'JetBrains Mono',monospace;">admin@teste.com</span>
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ MODAL: ESQUECI MINHA SENHA ═══════════════════════════════ -->
+<div id="forgot-modal" class="modal-backdrop" onclick="closeForgot()" role="dialog" aria-modal="true" aria-labelledby="forgot-title">
+  <div class="glass-hi modal-card" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div id="forgot-title" style="font-size:.95rem;font-weight:700;">Recuperar senha</div>
+      <button class="btn btn-red btn-xs" onclick="closeForgot()" type="button">Fechar</button>
+    </div>
+    <p style="font-size:.72rem;color:var(--muted);margin-bottom:14px;">
+      Informe o e-mail da sua conta. Se existir, enviaremos as instrucoes.
+    </p>
+    <div class="field" id="wrap-forgot-email">
+      <label>E-mail</label>
+      <input type="text" id="forgot-email" placeholder="seu@email.com"/>
+      <span class="err">E-mail invalido.</span>
+    </div>
+    <button class="btn btn-grad" id="btn-forgot" onclick="submitForgot()"
+      style="width:100%;margin-top:14px;">Enviar instrucoes</button>
+    <div id="forgot-status" style="margin-top:12px;font-size:.72rem;color:var(--muted);display:none;text-align:center;" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ DASHBOARD ═══════════════════════════════ -->
+<div id="dashboard" style="display:none;">
+
+  <!-- Header -->
+  <header style="position:sticky;top:0;z-index:50;
+    background:rgba(4,6,14,.94);backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--b);">
+    <div class="z" style="max-width:1100px;margin:0 auto;
+      padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:32px;height:32px;border-radius:9px;flex-shrink:0;
+          background:linear-gradient(135deg,rgba(99,120,255,.28),rgba(168,85,247,.28));
+          border:1px solid rgba(99,120,255,.38);
+          display:flex;align-items:center;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M9 1L3 9h5l-1 6 7-9H9l1-5z" fill="url(#bh)"/>
+            <defs><linearGradient id="bh" x1="3" y1="1" x2="13" y2="15" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6378ff"/><stop offset="1" stop-color="#a855f7"/>
+            </linearGradient></defs>
+          </svg>
+        </div>
+        <div>
+          <div class="grad-text" style="font-size:.95rem;font-weight:800;letter-spacing:.04em;animation:flicker 6s infinite;">
+            EletroUni
+          </div>
+          <div class="label" style="margin-top:1px;">Painel de Controle</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="dot dot-green"></span>
+          <div>
+            <div id="hdr-user" style="font-size:.78rem;font-weight:600;color:var(--text);"></div>
+            <div id="hdr-role" class="label" style="margin-top:1px;"></div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <nav class="tab-bar z" style="max-width:1100px;margin:0 auto;">
+    <button class="tab-btn active" id="tab-btn-devices" onclick="switchTab('devices',this)">
+      📱 Meus Dispositivos
+    </button>
+    <button class="tab-btn" id="tab-btn-new" onclick="switchTab('new',this)">
+      ➕ Novo Aparelho
+    </button>
+    <button class="tab-btn" id="tab-btn-monitor" onclick="switchTab('monitor',this)" style="display:none;">
+      📊 Monitoramento
+    </button>
+    <button class="tab-btn" id="tab-btn-sim" onclick="switchTab('sim',this)" style="display:none;">
+      🤖 Simulador IA
+      <span class="badge badge-violet" style="font-size:.52rem;padding:1px 6px;">Admin</span>
+    </button>
+  </nav>
+
+  <!-- Content -->
+  <div class="z" style="max-width:1100px;margin:0 auto;padding:24px 16px;">
+
+    <!-- Status de integracao Make -->
+    <div class="glass anim-rise" id="sync-panel" style="padding:14px 18px;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div>
+          <div class="label">Sincronizacao Make</div>
+          <div style="font-size:.85rem;font-weight:600;">Status do webhook</div>
+        </div>
+        <div id="sync-last" class="mono" style="font-size:.66rem;color:var(--muted);" aria-live="polite">Ultimo envio: —</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;background:rgba(4,6,14,.6);border:1px solid var(--b);">
+          <div>
+            <div class="label">Gestao</div>
+            <div style="font-size:.75rem;color:var(--muted);">Login/Cadastro/Equip</div>
+          </div>
+          <div style="text-align:right;">
+            <span id="sync-gestao-badge" class="badge badge-blue">Aguardando</span>
+            <div class="mono" style="font-size:.6rem;color:var(--dim);margin-top:4px;">
+              <span id="sync-gestao-time">—</span> · <span id="sync-gestao-ms">—</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;background:rgba(4,6,14,.6);border:1px solid var(--b);">
+          <div>
+            <div class="label">Telemetria</div>
+            <div style="font-size:.75rem;color:var(--muted);">Simulador IA</div>
+          </div>
+          <div style="text-align:right;">
+            <span id="sync-tele-badge" class="badge badge-blue">Aguardando</span>
+            <div class="mono" style="font-size:.6rem;color:var(--dim);margin-top:4px;">
+              <span id="sync-tele-time">—</span> · <span id="sync-tele-ms">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ ABA: MEUS DISPOSITIVOS ══════════════ -->
+    <div id="tab-devices" class="tab-pane active">
+
+      <!-- KPI row -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:13px;margin-bottom:22px;">
+        <div class="glass kpi anim-rise s1" style="--accent:var(--blue)">
+          <div class="label">Total Cadastrado</div>
+          <div class="kpi-val" id="kpi-total" style="color:var(--blue);">0</div>
+          <div class="kpi-sub">aparelhos</div>
+        </div>
+        <div class="glass kpi anim-rise s2" style="--accent:var(--amber)">
+          <div class="label">Potência Total</div>
+          <div class="kpi-val" id="kpi-pot" style="color:var(--amber);">0 W</div>
+          <div class="kpi-sub">soma cadastrada</div>
+        </div>
+        <div class="glass kpi anim-rise s3" style="--accent:var(--green)">
+          <div class="label">Custo/hora Total</div>
+          <div class="kpi-val" id="kpi-custo-h" style="color:var(--green);">R$ 0,00</div>
+          <div class="kpi-sub">(W ÷ 1000) × 0,92</div>
+        </div>
+        <div class="glass kpi anim-rise s4" style="--accent:var(--cyan)">
+          <div class="label">Custo Mensal Est.</div>
+          <div class="kpi-val" id="kpi-custo-m" style="color:var(--cyan);">R$ 0,00</div>
+          <div class="kpi-sub">8h/dia × 30 dias</div>
+        </div>
+      </div>
+
+      <!-- Filtros e busca -->
+      <div class="glass anim-rise" style="padding:14px 16px;margin-bottom:14px;animation-delay:.08s;">
+        <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;">
+          <div class="field" style="min-width:200px;flex:1;">
+            <label>Buscar</label>
+            <input type="text" id="filter-search" placeholder="Nome do aparelho" aria-label="Buscar aparelho"/>
+          </div>
+          <div class="field" style="min-width:180px;">
+            <label>Cômodo</label>
+            <select id="filter-comodo" aria-label="Filtrar por comodo">
+              <option value="">Todos</option>
+              <option value="Cozinha">Cozinha</option>
+              <option value="Sala">Sala</option>
+              <option value="Quarto">Quarto</option>
+              <option value="Escritório">Escritório</option>
+              <option value="Banheiro">Banheiro</option>
+              <option value="Área de Serviço">Área de Serviço</option>
+              <option value="Garagem">Garagem</option>
+              <option value="Sala de Reuniões">Sala de Reuniões</option>
+            </select>
+          </div>
+          <div class="field" style="min-width:200px;">
+            <label>Ordenar</label>
+            <select id="filter-sort" aria-label="Ordenar dispositivos">
+              <option value="recent">Mais recentes</option>
+              <option value="pot-desc">Potência (maior)</option>
+              <option value="pot-asc">Potência (menor)</option>
+              <option value="custo-desc">Custo (maior)</option>
+              <option value="custo-asc">Custo (menor)</option>
+              <option value="nome-asc">Nome (A-Z)</option>
+              <option value="nome-desc">Nome (Z-A)</option>
+            </select>
+          </div>
+          <div class="field" style="min-width:120px;">
+            <label>Ações</label>
+            <button class="btn btn-outline btn-sm" id="filter-clear" type="button">Limpar</button>
+          </div>
+        </div>
+        <div id="filter-meta" class="label" style="margin-top:8px;">Mostrando 0 de 0</div>
+        <div class="label" style="margin-top:4px;">Atalhos: Alt+D Dispositivos · Alt+N Novo · Alt+M Monitor · Alt+S Simulador · / Busca</div>
+      </div>
+
+      <!-- Grid de cards de dispositivos -->
+      <div id="devices-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+        <div class="empty anim-rise" style="grid-column:1/-1;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="5" y="2" width="14" height="20" rx="2"/>
+            <path d="M9 7h6M9 11h6M9 15h4"/>
+          </svg>
+          <p>Nenhum aparelho cadastrado ainda.<br/>Vá para a aba <strong style="color:var(--blue)">➕ Novo Aparelho</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ ABA: NOVO APARELHO ══════════════ -->
+    <div id="tab-new" class="tab-pane">
+      <div style="max-width:580px;margin:0 auto;">
+        <div class="glass anim-rise" style="padding:0;overflow:hidden;">
+
+          <!-- Card header -->
+          <div style="padding:20px 26px;border-bottom:1px solid var(--b);
+            background:linear-gradient(135deg,rgba(99,120,255,.07),rgba(168,85,247,.05));">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div style="width:40px;height:40px;border-radius:11px;flex-shrink:0;
+                background:rgba(99,120,255,.12);border:1px solid rgba(99,120,255,.3);
+                display:flex;align-items:center;justify-content:center;">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <circle cx="9" cy="9" r="7" stroke="#6378ff" stroke-width="1.5"/>
+                  <path d="M9 6v6M6 9h6" stroke="#6378ff" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <div style="font-size:.95rem;font-weight:700;" class="grad-text">Cadastrar Novo Aparelho</div>
+                <div class="label" style="margin-top:2px;">Conecte ao ecossistema EletroUni</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:26px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+
+              <div class="field" id="en-nome-w" style="grid-column:1/-1;">
+                <label>Nome do Aparelho</label>
+                <input type="text" id="en-nome" placeholder="ex: Geladeira Samsung" maxlength="60"/>
+                <span class="err">Informe o nome.</span>
+              </div>
+
+              <div class="field" id="en-tensao-w">
+                <label>Tensão</label>
+                <select id="en-tensao">
+                  <option value="220">220V</option>
+                  <option value="127">127V</option>
+                  <option value="bivolt">Bivolt</option>
+                </select>
+              </div>
+
+              <div class="field" id="en-comodo-w">
+                <label>Cômodo</label>
+                <select id="en-comodo">
+                  <option value="">— Selecione —</option>
+                  <option value="Cozinha">🍳 Cozinha</option>
+                  <option value="Sala">🛋️ Sala</option>
+                  <option value="Quarto">🛏️ Quarto</option>
+                  <option value="Escritório">💼 Escritório</option>
+                  <option value="Banheiro">🚿 Banheiro</option>
+                  <option value="Área de Serviço">🧺 Área de Serviço</option>
+                  <option value="Garagem">🚗 Garagem</option>
+                  <option value="Sala de Reuniões">📋 Sala de Reuniões</option>
+                </select>
+                <span class="err">Selecione o cômodo.</span>
+              </div>
+
+              <div class="field" id="en-pot-w" style="grid-column:1/-1;">
+                <label>Potência (Watts)</label>
+                <input type="number" id="en-pot" placeholder="ex: 350" min="1" max="50000"/>
+                <span class="err">Informe a potência.</span>
+              </div>
+
+            </div>
+
+            <!-- Preview JSON -->
+            <div style="margin-bottom:20px;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--b);">
+              <div style="padding:8px 15px;background:rgba(4,6,14,.9);
+                border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;">
+                <span class="label">Payload que será enviado</span>
+                <button class="btn btn-outline btn-xs" onclick="copyEquipPayload()">copiar</button>
+              </div>
+              <pre id="equip-preview" style="padding:14px 16px;font-size:.68rem;
+                line-height:1.8;color:var(--muted);overflow-x:auto;max-height:130px;
+                background:rgba(2,3,8,.95);font-family:'JetBrains Mono',monospace;"></pre>
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <button class="btn btn-grad" id="btn-equip" onclick="cadastrarEquip()">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                  <circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.4"/>
+                  <path d="M6.5 4v5M4 6.5h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+                <span id="btn-equip-txt">Cadastrar Aparelho</span>
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="clearEquipForm()">Limpar</button>
+              <div id="equip-status" style="margin-left:auto;font-size:.7rem;
+                font-family:'JetBrains Mono',monospace;"></div>
+            </div>
+
+            <div id="equip-banner"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ ABA: MONITORAMENTO ══════════════ -->
+    <div id="tab-monitor" class="tab-pane">
+
+      <!-- KPIs monitoramento -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:13px;margin-bottom:20px;">
+        <div class="glass kpi anim-rise s1" style="--accent:var(--blue)">
+          <div class="label">Consumo Total</div>
+          <div class="kpi-val mono" id="mon-watts" style="color:var(--blue);">— W</div>
+          <div class="kpi-sub">última telemetria</div>
+        </div>
+        <div class="glass kpi anim-rise s2" style="--accent:var(--amber)">
+          <div class="label">Custo Est. Hoje</div>
+          <div class="kpi-val" id="mon-cost" style="color:var(--amber);">—</div>
+          <div class="kpi-sub" id="mon-cost-formula">(W ÷ 1000) × 0,92</div>
+        </div>
+        <div class="glass kpi anim-rise s3" style="--accent:var(--green)">
+          <div class="label">Dispositivos</div>
+          <div class="kpi-val" id="mon-devs" style="color:var(--green);">0</div>
+          <div class="kpi-sub">cadastrados</div>
+        </div>
+        <div class="glass kpi anim-rise s4" style="--accent:var(--violet)">
+          <div class="label">Status</div>
+          <div style="margin:10px 0 4px;">
+            <span id="mon-status-badge" class="badge badge-blue">Aguardando</span>
+          </div>
+          <div class="kpi-sub">ecossistema IA</div>
+        </div>
+      </div>
+
+      <!-- IA Insight card -->
+      <div class="glass-hi insight-card anim-rise s5 mb-5"
+        style="margin-bottom:20px;box-shadow:0 0 40px rgba(99,120,255,.1),0 8px 32px rgba(0,0,0,.5);">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+          gap:8px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div id="ia-ic-wrap" style="width:36px;height:36px;border-radius:10px;flex-shrink:0;
+              background:linear-gradient(135deg,rgba(99,120,255,.18),rgba(168,85,247,.18));
+              border:1px solid rgba(99,120,255,.3);
+              display:flex;align-items:center;justify-content:center;">
+              <svg id="ia-ic-s" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="6" r="3" stroke="url(#gia)" stroke-width="1.5"/>
+                <path d="M5 10.5c0-1.66 1.34-3 3-3s3 1.34 3 3" stroke="url(#gia)" stroke-width="1.5" stroke-linecap="round"/>
+                <defs><linearGradient id="gia" x1="5" y1="3" x2="11" y2="13" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#6378ff"/><stop offset="1" stop-color="#a855f7"/>
+                </linearGradient></defs>
+              </svg>
+              <svg id="ia-ic-spin" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                style="display:none;animation:spin .85s linear infinite;">
+                <circle cx="8" cy="8" r="5.5" stroke="rgba(99,120,255,.25)" stroke-width="1.5"/>
+                <path d="M8 2.5A5.5 5.5 0 0 1 13.5 8" stroke="#6378ff" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:.95rem;font-weight:700;" class="grad-text">IA Insight</div>
+              <div class="label">resposta do Gemini via Make.com</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span id="ia-badge" class="badge badge-blue" style="display:none;">Make.com</span>
+            <span id="ia-ts" class="mono" style="font-size:.6rem;color:var(--dim);"></span>
+          </div>
+        </div>
+        <div style="padding-left:46px;">
+          <div id="ia-idle"     style="font-size:.78rem;color:var(--dim);font-style:italic;">Aguardando leitura de telemetria...</div>
+          <div id="ia-thinking" style="display:none;align-items:center;gap:10px;">
+            <div class="thinking-dots"><span></span><span></span><span></span></div>
+            <span style="font-size:.78rem;color:var(--blue);">IA processando...</span>
+          </div>
+          <div id="ia-result" style="display:none;">
+            <div id="ia-text" style="font-size:.82rem;line-height:1.75;color:var(--text);
+              font-family:'JetBrains Mono',monospace;white-space:pre-wrap;word-break:break-word;"></div>
+          </div>
+          <div id="ia-err" style="display:none;">
+            <div id="ia-err-txt" style="font-size:.78rem;color:var(--red);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div class="glass anim-rise" style="animation-delay:.3s;">
+        <div style="padding:12px 18px;border-bottom:1px solid var(--b);
+          display:flex;align-items:center;gap:8px;">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <rect x="1" y="1" width="11" height="11" rx="2.5" stroke="var(--muted)" stroke-width="1.2"/>
+            <path d="M3.5 4.5h6M3.5 7h6M3.5 9.5h3.5" stroke="var(--muted)" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+          <span style="font-size:.8rem;font-weight:600;">Log de Eventos</span>
+          <span id="log-badge" class="badge badge-blue ml-auto" style="margin-left:auto;">0</span>
+        </div>
+        <div id="event-log" style="padding:13px 18px;max-height:140px;overflow-y:auto;">
+          <div class="empty" style="padding:14px 0;"><p>Nenhum evento ainda.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════ ABA: SIMULADOR IA ══════════════ -->
+    <div id="tab-sim" class="tab-pane">
+
+      <!-- Banner admin -->
+      <div class="glass-hi anim-rise mb-6"
+        style="margin-bottom:20px;padding:16px 22px;display:flex;align-items:flex-start;gap:14px;
+        border-color:rgba(168,85,247,.28);background:rgba(168,85,247,.05);">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;margin-top:2px;">
+          <path d="M9 2l-7 7h4.5L5 16l12-9H12L14 2H9z" stroke="#a855f7" stroke-width="1.4" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div>
+          <div style="font-size:.84rem;font-weight:600;color:var(--violet);margin-bottom:3px;">Modo Admin — Simulador IoT</div>
+          <p style="font-size:.71rem;color:var(--muted);line-height:1.65;">
+            Gera payload de telemetria e envia para o Make.com.
+            O campo <code style="color:var(--blue);background:rgba(99,120,255,.1);
+            padding:1px 6px;border-radius:4px;">"analisar"</code> da resposta
+            é exibido no card IA Insight.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
+
+        <!-- Painel de simulação -->
+        <div class="glass anim-rise" style="animation-delay:.1s;">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--b);
+            display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div style="font-size:.86rem;font-weight:700;" class="grad-text2">Simulador de Telemetria</div>
+              <div class="label" style="margin-top:2px;">Webhook → Make → Gemini → Dashboard</div>
+            </div>
+            <span id="sim-count-badge" class="badge badge-violet" style="display:none;">0 leituras</span>
+          </div>
+          <div style="padding:20px;">
+
+            <!-- Preview payload -->
+            <div style="margin-bottom:18px;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--b);">
+              <div style="padding:8px 14px;background:rgba(4,6,14,.9);border-bottom:1px solid var(--b);
+                display:flex;align-items:center;gap:8px;">
+                <span id="sim-dot" class="dot dot-dim"></span>
+                <span class="label">Último payload</span>
+                <button class="btn btn-outline btn-xs" style="margin-left:auto;" onclick="copySimPayload()">copiar</button>
+              </div>
+              <pre id="sim-preview" style="padding:13px 16px;font-size:.68rem;line-height:1.8;
+                color:var(--muted);overflow-x:auto;max-height:160px;
+                background:rgba(2,3,8,.95);font-family:'JetBrains Mono',monospace;">Clique em "Simular Telemetria" para gerar...</pre>
+            </div>
+
+            <!-- Histórico -->
+            <div id="sim-hist-wrap" style="margin-bottom:18px;display:none;">
+              <div class="label" style="margin-bottom:8px;">Histórico de Leituras</div>
+              <div id="sim-hist" style="display:flex;flex-direction:column;gap:5px;
+                max-height:170px;overflow-y:auto;"></div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+              <button class="btn btn-grad2" id="btn-sim" onclick="simTelemetria()">
+                <svg id="sim-ic" width="15" height="15" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 2v3M8 11v3M2 8h3M11 8h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+                <span id="sim-btn-txt">Simular Telemetria</span>
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="resetSim()">Resetar</button>
+            </div>
+
+            <div style="margin-top:13px;min-height:34px;">
+              <div id="sim-status" style="font-size:.72rem;font-family:'JetBrains Mono',monospace;
+                display:inline-flex;align-items:center;gap:7px;padding:8px 13px;
+                border-radius:8px;background:transparent;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Config técnica -->
+        <div class="glass anim-rise" style="animation-delay:.15s;">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--b);">
+            <div style="font-size:.82rem;font-weight:600;color:var(--text);">Configuração Técnica</div>
+            <div class="label" style="margin-top:2px;">parâmetros do ecossistema</div>
+          </div>
+          <div style="padding:18px;display:flex;flex-direction:column;gap:10px;">
+            <div style="padding:13px;border-radius:var(--r-sm);border:1px solid var(--b);background:rgba(4,6,14,.6);">
+              <div class="label" style="margin-bottom:6px;">URL Gestão (Login/Cadastro)</div>
+              <div class="mono" style="font-size:.6rem;color:var(--blue);word-break:break-all;line-height:1.5;">
+                https://hook.us2.make.com/b5gama4kvsd2v2ijlbuir1l05b8gs681
+              </div>
+            </div>
+            <div style="padding:13px;border-radius:var(--r-sm);border:1px solid var(--b);background:rgba(4,6,14,.6);">
+              <div class="label" style="margin-bottom:6px;">URL Telemetria (Simulador)</div>
+              <div class="mono" style="font-size:.6rem;color:var(--violet);word-break:break-all;line-height:1.5;" id="cfg-tele-url">
+                (não configurada)
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="padding:13px;border-radius:var(--r-sm);border:1px solid var(--b);background:rgba(4,6,14,.6);">
+                <div class="label" style="margin-bottom:4px;">Campo Resposta</div>
+                <div class="mono" style="font-size:.74rem;color:var(--green);">{ "analisar" }</div>
+              </div>
+              <div style="padding:13px;border-radius:var(--r-sm);border:1px solid var(--b);background:rgba(4,6,14,.6);">
+                <div class="label" style="margin-bottom:4px;">Tarifa</div>
+                <div class="mono" style="font-size:.74rem;color:var(--amber);">R$ 0,92/kWh</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /dashboard -->
+
+<!-- Toasts -->
+<div id="toasts" style="position:fixed;bottom:22px;right:18px;z-index:999;
+  display:flex;flex-direction:column;gap:9px;pointer-events:none;"></div>
+
+<!-- ═════════════════════════════════ JAVASCRIPT ═════════════════════════════════ -->
+<script>
+
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  ⚙️  CONFIGURAÇÕES DE INTEGRAÇÃO                                ║
+// ╚══════════════════════════════════════════════════════════════════╝
+
+// URL única de gestão (login, cadastro usuário, cadastro equipamento)
+const URL_GESTAO = 'https://hook.us2.make.com/b5gama4kvsd2v2ijlbuir1l05b8gs681';
+
+// URL do cenário de telemetria (com Gemini)
+// ↓ COLOQUE AQUI SUA URL DO MAKE PARA TELEMETRIA ↓
+const URL_TELEMETRIA = 'https://hook.us2.make.com/30uxnix9ym4d8mm1tm5f776ptsvlxo3n'; // ← ex: 'https://hook.us2.make.com/XXXXXXXXXXXXXXXX'
+
+// ── Usuário admin que vê o Simulador ─────────────────────────────
+const ADMIN_EMAIL = 'admin@teste.com';
+
+// ══════════════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════════════════════════
+const App = {
+  user:     null,   // { nome, email, isAdmin }
+  devices:  [],     // aparelhos cadastrados na sessão
+  logs:     [],
+  sim:      { count:0, history:[], last:null },
+  tick:     0,
+};
+
+const STORAGE_KEY = 'eletro-uni-state';
+
+const Filters = { search:'', comodo:'', sort:'recent' };
+let lastRemoved = null;
+let undoToastEl = null;
+let undoToastTimer = null;
+
+function makeIdempotencyKey(prefix = 'req') {
+  const rnd = (globalThis.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : (Math.random().toString(36).slice(2) + Date.now().toString(36));
+  return `${prefix}_${rnd}`;
+}
+
+function saveAppState() {
+  try {
+    const data = {
+      user: App.user ? { nome: App.user.nome, email: App.user.email } : null,
+      devices: Array.isArray(App.devices) ? App.devices : [],
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (err) {}
+}
+
+function loadAppState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || !data.user || !data.user.email) return null;
+    return data;
+  } catch (err) {
+    return null;
+  }
+}
+
+function clearAppState() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
+}
+
+function restoreAppState() {
+  const data = loadAppState();
+  if (!data) return false;
+  App.devices = Array.isArray(data.devices) ? data.devices : [];
+  const user = {
+    nome: data.user.nome || data.user.email.split('@')[0],
+    email: data.user.email,
+    isAdmin: data.user.email === ADMIN_EMAIL,
+  };
+  loginSuccess(user);
+  renderDevicesGrid();
+  refreshDevKPIs();
+  updateMonKPIs();
+  return true;
+}
+
+function updateSyncStatus(type, ok, ms) {
+  const badge = document.getElementById(`sync-${type}-badge`);
+  const timeEl = document.getElementById(`sync-${type}-time`);
+  const msEl = document.getElementById(`sync-${type}-ms`);
+  const lastEl = document.getElementById('sync-last');
+  if (!badge || !timeEl || !msEl) return;
+  const cfg = ok
+    ? { cls:'badge-green', text:'Ok' }
+    : { cls:'badge-red', text:'Falha' };
+  badge.className = 'badge ' + cfg.cls;
+  badge.textContent = cfg.text;
+  const now = new Date().toLocaleTimeString('pt-BR');
+  timeEl.textContent = now;
+  msEl.textContent = (ms != null ? `${ms} ms` : '—');
+  if (lastEl) lastEl.textContent = `Ultimo envio: ${now}`;
+}
+
+async function fetchWithTiming(url, options, type) {
+  const t0 = performance.now();
+  try {
+    const res = await fetch(url, options);
+    const ms = Math.round(performance.now() - t0);
+    updateSyncStatus(type, res.ok, ms);
+    return res;
+  } catch (err) {
+    const ms = Math.round(performance.now() - t0);
+    updateSyncStatus(type, false, ms);
+    throw err;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════════════
+let authMode = 'login';
+
+function setAuthMode(mode) {
+  authMode = mode;
+  const isSignup = mode === 'signup';
+  document.getElementById('toggle-login').classList.toggle('active', !isSignup);
+  document.getElementById('toggle-signup').classList.toggle('active', isSignup);
+  document.getElementById('wrap-signup-name').style.display = isSignup ? 'flex' : 'none';
+  document.getElementById('forgot-wrap').style.display = isSignup ? 'none' : 'block';
+  document.getElementById('btn-auth-txt').textContent = isSignup ? 'Criar Conta' : 'Entrar';
+  document.getElementById('auth-error').style.display = 'none';
+  clearAuthErrors();
+}
+
+function clearAuthErrors() {
+  document.getElementById('wrap-auth-email').classList.remove('invalid');
+  document.getElementById('wrap-auth-pass').classList.remove('invalid');
+  document.getElementById('wrap-signup-name').classList.remove('invalid');
+}
+
+function togglePassVis() {
+  const inp = document.getElementById('auth-pass');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function validateEmailValue(val) {
+  return val.includes('@');
+}
+
+function validatePasswordValue(val) {
+  return val.length >= 6;
+}
+
+function validatePotValue(val) {
+  const n = parseFloat(val);
+  return !Number.isNaN(n) && n > 0;
+}
+
+function setupLiveValidation() {
+  const email = document.getElementById('auth-email');
+  const wrapEmail = document.getElementById('wrap-auth-email');
+  const pass = document.getElementById('auth-pass');
+  const wrapPass = document.getElementById('wrap-auth-pass');
+  const forgot = document.getElementById('forgot-email');
+  const wrapForgot = document.getElementById('wrap-forgot-email');
+  const pot = document.getElementById('en-pot');
+  const wrapPot = document.getElementById('en-pot-w');
+
+  if (email && wrapEmail) {
+    email.addEventListener('input', () => {
+      if (!email.value) { wrapEmail.classList.remove('invalid'); return; }
+      wrapEmail.classList.toggle('invalid', !validateEmailValue(email.value));
+    });
+  }
+  if (pass && wrapPass) {
+    pass.addEventListener('input', () => {
+      if (!pass.value) { wrapPass.classList.remove('invalid'); return; }
+      wrapPass.classList.toggle('invalid', !validatePasswordValue(pass.value));
+    });
+  }
+  if (forgot && wrapForgot) {
+    forgot.addEventListener('input', () => {
+      if (!forgot.value) { wrapForgot.classList.remove('invalid'); return; }
+      wrapForgot.classList.toggle('invalid', !validateEmailValue(forgot.value));
+    });
+  }
+  if (pot && wrapPot) {
+    pot.addEventListener('input', () => {
+      if (!pot.value) { wrapPot.classList.remove('invalid'); return; }
+      wrapPot.classList.toggle('invalid', !validatePotValue(pot.value));
+    });
+  }
+}
+
+function openForgot() {
+  const modal = document.getElementById('forgot-modal');
+  const email = document.getElementById('auth-email').value.trim();
+  document.getElementById('forgot-email').value = email;
+  document.getElementById('forgot-status').style.display = 'none';
+  document.getElementById('wrap-forgot-email').classList.remove('invalid');
+  modal.style.display = 'flex';
+  document.getElementById('forgot-email').focus();
+}
+
+function closeForgot() {
+  document.getElementById('forgot-modal').style.display = 'none';
+}
+
+function submitForgot() {
+  const wrap = document.getElementById('wrap-forgot-email');
+  const email = document.getElementById('forgot-email').value.trim();
+  wrap.classList.remove('invalid');
+  if (!email || !email.includes('@')) {
+    wrap.classList.add('invalid');
+    return;
+  }
+  const status = document.getElementById('forgot-status');
+  status.style.display = 'block';
+  status.style.color = 'var(--green)';
+  status.textContent = 'Se o e-mail existir, enviaremos as instrucoes.';
+  toast('Solicitacao enviada.', 'info');
+}
+
+async function submitAuth() {
+  clearAuthErrors();
+  const email = document.getElementById('auth-email').value.trim();
+  const pass  = document.getElementById('auth-pass').value;
+  const nome  = document.getElementById('auth-name').value.trim();
+
+  if (!email || !email.includes('@')) {
+    document.getElementById('wrap-auth-email').classList.add('invalid');
+    return;
+  }
+  if (!pass || pass.length < 6) {
+    document.getElementById('wrap-auth-pass').classList.add('invalid');
+    showAuthError('Senha deve ter ao menos 6 caracteres.');
+    return;
+  }
+  if (authMode === 'signup' && !nome) {
+    document.getElementById('wrap-signup-name').classList.add('invalid');
+    showAuthError('Informe seu nome.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-auth');
+  const txt = document.getElementById('btn-auth-txt');
+  btn.disabled = true;
+  txt.textContent = authMode === 'signup' ? 'Criando conta...' : 'Entrando...';
+
+  const payload = authMode === 'signup'
+    ? { acao: 'cadastro_user', nome, email, senha: pass, idempotency_key: makeIdempotencyKey('cad_user') }
+    : { acao: 'login', email, senha: pass };
+
+  try {
+    const res = await fetchWithTiming(URL_GESTAO, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }, 'gestao');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    // Tenta ler resposta (sucesso/erro do servidor)
+    let data = null;
+    try { const raw = await res.text(); if (raw.trim()) data = JSON.parse(raw); } catch{}
+
+    // Verifica se Make retornou erro explícito
+    if (data && data.erro) { showAuthError(data.erro); return; }
+
+    // Login bem-sucedido (localmente ou pelo Make)
+    const nomeDisplay = nome || (data && data.nome) || email.split('@')[0];
+    loginSuccess({ nome: nomeDisplay, email, isAdmin: email === ADMIN_EMAIL });
+
+  } catch (err) {
+    showAuthError('Falha na conexão: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    txt.textContent = authMode === 'signup' ? 'Criar Conta' : 'Entrar';
+  }
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+function loginSuccess(user) {
+  App.user = user;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display    = 'block';
+  document.getElementById('hdr-user').textContent       = user.nome;
+  document.getElementById('hdr-role').textContent       = user.isAdmin ? 'Administrador' : 'Usuário';
+
+  // Mostra abas admin
+  if (user.isAdmin) {
+    document.getElementById('tab-btn-monitor').style.display = 'flex';
+    document.getElementById('tab-btn-sim').style.display     = 'flex';
+    document.getElementById('cfg-tele-url').textContent =
+      URL_TELEMETRIA || '(não configurada — edite URL_TELEMETRIA no código)';
+  }
+
+  refreshEquipPreview();
+  renderDevicesGrid();
+  refreshDevKPIs();
+  updateMonKPIs();
+  addLog('success', `Bem-vindo, ${user.nome}! Login realizado.`);
+  toast(`Bem-vindo, ${user.nome}!`, 'success');
+  saveAppState();
+}
+
+function logout() {
+  App.user = null; App.devices = []; App.logs = [];
+  App.sim   = { count:0, history:[], last:null };
+  document.getElementById('dashboard').style.display    = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('auth-pass').value = '';
+  document.getElementById('auth-error').style.display = 'none';
+  setAuthMode('login');
+  clearFilters();
+  lastRemoved = null;
+  if (undoToastEl) { undoToastEl.remove(); undoToastEl = null; }
+  if (undoToastTimer) { clearTimeout(undoToastTimer); undoToastTimer = null; }
+  clearAppState();
+}
+
+// Enter key on login form
+document.addEventListener('keydown', e => {
+  const loginVisible = document.getElementById('login-screen').style.display !== 'none';
+  const modal = document.getElementById('forgot-modal');
+
+  if (e.key === 'Escape' && modal && modal.style.display !== 'none') {
+    closeForgot();
+    return;
+  }
+
+  if (e.key === 'Enter' && loginVisible) {
+    if (modal && modal.style.display !== 'none') {
+      submitForgot();
+    } else {
+      submitAuth();
+    }
+    return;
+  }
+
+  if (!loginVisible) {
+    const target = e.target;
+    const inField = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+    if (e.key === '/' && !inField) {
+      const search = document.getElementById('filter-search');
+      if (search) { e.preventDefault(); search.focus(); }
+      return;
+    }
+    if (e.altKey && !inField) {
+      const k = e.key.toLowerCase();
+      const go = (tab, btnId, mustShow=false) => {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        if (mustShow && btn.style.display === 'none') return;
+        switchTab(tab, btn);
+      };
+      if (k === 'd') go('devices','tab-btn-devices');
+      if (k === 'n') go('new','tab-btn-new');
+      if (k === 'm') go('monitor','tab-btn-monitor', true);
+      if (k === 's') go('sim','tab-btn-sim', true);
+    }
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CADASTRO DE EQUIPAMENTO
+// ══════════════════════════════════════════════════════════════════
+const ICONS = {
+  'Cozinha':'🍳','Sala':'🛋️','Quarto':'🛏️','Escritório':'💼',
+  'Banheiro':'🚿','Área de Serviço':'🧺','Garagem':'🚗','Sala de Reuniões':'📋'
+};
+
+function getEquipPayload() {
+  return {
+    acao:    'cadastro_equip',
+    email:   App.user?.email || '',
+    nome:    document.getElementById('en-nome').value.trim()   || '—',
+    tensao:  document.getElementById('en-tensao').value        || '220',
+    comodo:  document.getElementById('en-comodo').value        || '—',
+    potencia_w: parseFloat(document.getElementById('en-pot').value) || null,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function refreshEquipPreview() {
+  if (document.getElementById('equip-preview'))
+    document.getElementById('equip-preview').textContent = JSON.stringify(getEquipPayload(), null, 2);
+}
+
+['en-nome','en-tensao','en-comodo','en-pot'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', refreshEquipPreview);
+  if (el) el.addEventListener('change', refreshEquipPreview);
+});
+
+function copyEquipPayload() {
+  navigator.clipboard.writeText(JSON.stringify(getEquipPayload(), null, 2))
+    .then(() => toast('Payload copiado!', 'info'))
+    .catch(() => toast('Erro ao copiar', 'error'));
+}
+
+function validateEquip() {
+  let ok = true;
+  if (!document.getElementById('en-nome').value.trim()) {
+    document.getElementById('en-nome-w').classList.add('invalid'); ok = false;
+  }
+  if (!document.getElementById('en-comodo').value) {
+    document.getElementById('en-comodo-w').classList.add('invalid'); ok = false;
+  }
+  const p = document.getElementById('en-pot').value;
+  if (!p || parseFloat(p) <= 0) {
+    document.getElementById('en-pot-w').classList.add('invalid'); ok = false;
+  }
+  return ok;
+}
+
+function clearEquipErrors() {
+  ['en-nome-w','en-comodo-w','en-pot-w'].forEach(id =>
+    document.getElementById(id).classList.remove('invalid'));
+}
+
+async function cadastrarEquip() {
+  clearEquipErrors();
+  if (!validateEquip()) { toast('Preencha todos os campos.', 'warn'); return; }
+
+  const btn = document.getElementById('btn-equip');
+  const txt = document.getElementById('btn-equip-txt');
+  const st  = document.getElementById('equip-status');
+  btn.disabled = true; txt.textContent = 'Cadastrando...';
+  st.style.color = 'var(--muted)'; st.textContent = 'aguardando...';
+
+  const p = { ...getEquipPayload(), idempotency_key: makeIdempotencyKey('cad_equip') };
+
+  try {
+    const res = await fetchWithTiming(URL_GESTAO, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(p),
+    }, 'gestao');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    st.style.color = 'var(--green)'; st.textContent = '✓ Cadastrado com sucesso';
+    addLog('success', `Aparelho cadastrado: ${p.nome} (${p.potencia_w}W) — ${p.comodo}`);
+
+    // Salva localmente
+    App.devices.push({
+      id:    'dev_' + Date.now(),
+      nome:  p.nome, tensao: p.tensao,
+      comodo: p.comodo, potencia_w: p.potencia_w,
+      createdAt: Date.now(),
+      ts: new Date().toLocaleTimeString('pt-BR'),
+    });
+    saveAppState();
+
+    renderDevicesGrid();
+    refreshDevKPIs();
+    updateMonKPIs();
+    showEquipBanner(p.nome, p.potencia_w, p.comodo);
+    toast(`"${p.nome}" cadastrado!`, 'success');
+    clearEquipForm(false);
+
+  } catch (err) {
+    st.style.color = 'var(--red)'; st.textContent = '✗ ' + err.message;
+    addLog('error', 'Cadastro falhou: ' + err.message);
+    toast('Erro: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false; txt.textContent = 'Cadastrar Aparelho';
+  }
+}
+
+function showEquipBanner(nome, watts, comodo) {
+  const wrap = document.getElementById('equip-banner');
+  wrap.innerHTML = `
+    <div style="margin-top:18px;padding:15px 18px;border-radius:11px;
+      background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.25);
+      display:flex;align-items:center;gap:14px;
+      opacity:0;animation:rise .5s .1s forwards;">
+      <div style="width:32px;height:32px;min-width:32px;border-radius:50%;
+        background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.35);
+        display:flex;align-items:center;justify-content:center;">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M2 6.5l3 3 6-6" stroke="#4ade80" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:.86rem;font-weight:600;color:var(--green);margin-bottom:3px;">
+          Aparelho cadastrado com sucesso!
+        </div>
+        <div style="font-size:.7rem;color:var(--muted);">${nome} · ${watts}W · ${comodo}</div>
+      </div>
+      <button onclick="document.getElementById('equip-banner').innerHTML=''"
+        style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:.95rem;">✕</button>
+    </div>`;
+  setTimeout(() => {
+    const el = wrap.firstElementChild;
+    if (el) { el.style.transition='opacity .5s'; el.style.opacity='0'; setTimeout(()=>wrap.innerHTML='',500); }
+  }, 6000);
+}
+
+function clearEquipForm(resetStatus = true) {
+  document.getElementById('en-nome').value  = '';
+  document.getElementById('en-pot').value   = '';
+  document.getElementById('en-comodo').value = '';
+  clearEquipErrors();
+  if (resetStatus) {
+    document.getElementById('equip-status').textContent = '';
+    document.getElementById('equip-banner').innerHTML   = '';
+  }
+  refreshEquipPreview();
+}
+
+function updateFilterMeta(visible, total) {
+  const el = document.getElementById('filter-meta');
+  if (el) el.textContent = `Mostrando ${visible} de ${total}`;
+}
+
+function applyFilters(list) {
+  let res = [...list];
+  const q = Filters.search.trim().toLowerCase();
+  if (q) res = res.filter(d => (d.nome || '').toLowerCase().includes(q));
+  if (Filters.comodo) res = res.filter(d => d.comodo === Filters.comodo);
+  const sort = Filters.sort;
+  res.sort((a, b) => {
+    const pa = a.potencia_w || 0;
+    const pb = b.potencia_w || 0;
+    switch (sort) {
+      case 'pot-desc': return pb - pa;
+      case 'pot-asc':  return pa - pb;
+      case 'custo-desc': return pb - pa;
+      case 'custo-asc':  return pa - pb;
+      case 'nome-asc': return (a.nome || '').localeCompare(b.nome || '');
+      case 'nome-desc': return (b.nome || '').localeCompare(a.nome || '');
+      default: return (b.createdAt || 0) - (a.createdAt || 0);
+    }
+  });
+  return res;
+}
+
+function clearFilters() {
+  Filters.search = '';
+  Filters.comodo = '';
+  Filters.sort = 'recent';
+  const s = document.getElementById('filter-search');
+  const c = document.getElementById('filter-comodo');
+  const o = document.getElementById('filter-sort');
+  if (s) s.value = '';
+  if (c) c.value = '';
+  if (o) o.value = 'recent';
+  renderDevicesGrid();
+}
+
+function addSampleDevices() {
+  if (App.devices.length > 0) return;
+  const now = Date.now();
+  const samples = [
+    { nome:'Geladeira', tensao:'220', comodo:'Cozinha', potencia_w: 350 },
+    { nome:'Televisao 55"', tensao:'220', comodo:'Sala', potencia_w: 180 },
+    { nome:'Notebook', tensao:'bivolt', comodo:'Escritório', potencia_w: 90 },
+  ];
+  App.devices = samples.map((d, i) => ({
+    id: 'sample_' + (now + i),
+    createdAt: now + i,
+    ts: new Date().toLocaleTimeString('pt-BR'),
+    ...d,
+  }));
+  renderDevicesGrid();
+  refreshDevKPIs();
+  updateMonKPIs();
+  addLog('info', 'Dispositivos exemplo adicionados.');
+  toast('Exemplos adicionados.', 'success');
+  saveAppState();
+}
+
+function setupFilters() {
+  const search = document.getElementById('filter-search');
+  const comodo = document.getElementById('filter-comodo');
+  const sort = document.getElementById('filter-sort');
+  const clearBtn = document.getElementById('filter-clear');
+
+  if (search) {
+    search.addEventListener('input', () => {
+      Filters.search = search.value;
+      renderDevicesGrid();
+    });
+  }
+  if (comodo) {
+    comodo.addEventListener('change', () => {
+      Filters.comodo = comodo.value;
+      renderDevicesGrid();
+    });
+  }
+  if (sort) {
+    sort.addEventListener('change', () => {
+      Filters.sort = sort.value;
+      renderDevicesGrid();
+    });
+  }
+  if (clearBtn) {
+    clearBtn.addEventListener('click', clearFilters);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// RENDER DEVICES GRID
+// ══════════════════════════════════════════════════════════════════
+function renderDevicesGrid() {
+  const grid = document.getElementById('devices-grid');
+  const total = App.devices.length;
+  const list = applyFilters(App.devices);
+  updateFilterMeta(list.length, total);
+
+  if (total === 0) {
+    grid.innerHTML = `<div class="empty anim-rise" style="grid-column:1/-1;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <rect x="5" y="2" width="14" height="20" rx="2"/>
+        <path d="M9 7h6M9 11h6M9 15h4"/>
+      </svg>
+      <p>Nenhum aparelho ainda.<br/>Cadastre na aba <strong style="color:var(--blue)">➕ Novo Aparelho</strong>.</p>
+      <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="addSampleDevices()">Adicionar exemplos</button>
+    </div>`;
+    return;
+  }
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty anim-rise" style="grid-column:1/-1;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="M16 16l4 4"/>
+      </svg>
+      <p>Nenhum resultado com os filtros atuais.<br/>Tente limpar a busca ou mudar a ordenacao.</p>
+      <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="clearFilters()">Limpar filtros</button>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map((d, i) => {
+    const custoH = (d.potencia_w / 1000 * 0.92).toFixed(4);
+    const custoM = (d.potencia_w / 1000 * 8 * 30 * 0.92).toFixed(2);
+    const imp    = d.potencia_w > 1500 ? {l:'ALTO',cls:'badge-red'} :
+                   d.potencia_w > 500  ? {l:'MÉDIO',cls:'badge-amber'} :
+                                          {l:'BAIXO',cls:'badge-green'};
+    return `
+    <div class="glass dev-card anim-rise" style="animation-delay:${i*.06}s;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="font-size:1.5rem;">${ICONS[d.comodo]||'🔌'}</div>
+          <div>
+            <div style="font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:3px;">${d.nome}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="badge ${imp.cls}">${imp.l}</span>
+              <span class="badge badge-cyan">${d.tensao}V</span>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-red btn-xs" onclick="removeDevice('${d.id}')" title="Remover" aria-label="Remover dispositivo">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+            <path d="M1.5 1.5l8 8M9.5 1.5l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div style="padding:10px 12px;border-radius:8px;background:rgba(4,6,14,.6);border:1px solid var(--b);">
+          <div class="label" style="margin-bottom:3px;">Potência</div>
+          <div class="mono" style="font-size:.88rem;font-weight:700;color:var(--blue);">${d.potencia_w} W</div>
+        </div>
+        <div style="padding:10px 12px;border-radius:8px;background:rgba(4,6,14,.6);border:1px solid var(--b);">
+          <div class="label" style="margin-bottom:3px;">Cômodo</div>
+          <div style="font-size:.8rem;color:var(--text);">${d.comodo}</div>
+        </div>
+      </div>
+
+      <!-- Simulador de Gasto -->
+      <div style="padding:12px 14px;border-radius:9px;background:rgba(99,120,255,.06);border:1px solid rgba(99,120,255,.18);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div class="label">Simular Gasto</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="number" id="hrs-${d.id}" value="1" min="0.1" max="24" step="0.5"
+              style="width:58px;background:rgba(4,6,14,.8);border:1px solid var(--b);
+              color:var(--text);border-radius:6px;padding:5px 8px;font-size:.78rem;
+              font-family:'JetBrains Mono',monospace;outline:none;text-align:center;"/>
+            <span style="font-size:.72rem;color:var(--muted);">hora(s)</span>
+          </div>
+        </div>
+
+        <button class="btn btn-green btn-sm" onclick="simularGasto('${d.id}',${d.potencia_w})"
+          style="width:100%;justify-content:center;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M6 1v4.5L8.5 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/>
+          </svg>
+          Calcular Gasto
+        </button>
+
+        <div id="cost-${d.id}" class="cost-result">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div class="label" style="margin-bottom:3px;">Custo estimado</div>
+              <div id="cost-val-${d.id}" class="mono"
+                style="font-size:1.4rem;font-weight:700;color:var(--green);"></div>
+            </div>
+            <div style="text-align:right;">
+              <div class="label" style="margin-bottom:3px;">Fórmula</div>
+              <div id="cost-formula-${d.id}" class="mono" style="font-size:.65rem;color:var(--muted);"></div>
+            </div>
+          </div>
+          <div id="cost-proj-${d.id}" style="margin-top:10px;font-size:.68rem;color:var(--muted);
+            border-top:1px solid rgba(99,120,255,.12);padding-top:9px;line-height:1.7;"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;font-size:.62rem;color:var(--dim);text-align:right;">
+        Cadastrado às ${d.ts}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function simularGasto(id, watts) {
+  const hrsEl = document.getElementById('hrs-' + id);
+  const hrs   = parseFloat(hrsEl?.value) || 1;
+  if (hrs <= 0) { toast('Informe um número de horas válido.','warn'); return; }
+
+  // (Potência × horas / 1000) × 0,92
+  const kwh   = (watts * hrs) / 1000;
+  const custo = kwh * 0.92;
+
+  const projDia = (watts * 8 / 1000 * 0.92).toFixed(2);
+  const projMes = (watts * 8 * 30 / 1000 * 0.92).toFixed(2);
+
+  const costDiv  = document.getElementById('cost-' + id);
+  const costVal  = document.getElementById('cost-val-' + id);
+  const costForm = document.getElementById('cost-formula-' + id);
+  const costProj = document.getElementById('cost-proj-' + id);
+
+  costVal.textContent  = 'R$ ' + custo.toFixed(4).replace('.',',');
+  costForm.textContent = `(${watts}W × ${hrs}h ÷ 1000) × R$0,92`;
+  costProj.innerHTML   =
+    `Projeção: <span style="color:var(--amber)">R$ ${projDia}/dia</span> · ` +
+    `<span style="color:var(--red)">R$ ${projMes}/mês</span> (base 8h/dia)`;
+
+  costDiv.style.display = 'block';
+  addLog('info', `Gasto simulado: ${watts}W × ${hrs}h = R$ ${custo.toFixed(4)}`);
+}
+
+function removeDevice(id) {
+  const idx = App.devices.findIndex(d => d.id === id);
+  if (idx === -1) return;
+  const removed = App.devices.splice(idx, 1)[0];
+  renderDevicesGrid();
+  refreshDevKPIs();
+  updateMonKPIs();
+  addLog('action', 'Dispositivo removido da sessão.');
+  saveAppState();
+  lastRemoved = { device: removed, index: idx };
+  showUndoToast('Dispositivo removido.', () => {
+    if (!lastRemoved) return;
+    App.devices.splice(lastRemoved.index, 0, lastRemoved.device);
+    lastRemoved = null;
+    renderDevicesGrid();
+    refreshDevKPIs();
+    updateMonKPIs();
+    saveAppState();
+    addLog('info', 'Remocao desfeita.');
+  });
+}
+
+// ── KPIs da aba Dispositivos ────────────────────────────────────────
+function refreshDevKPIs() {
+  const n    = App.devices.length;
+  const totW = App.devices.reduce((s,d) => s + (d.potencia_w||0), 0);
+  const custoH = (totW / 1000 * 0.92).toFixed(4);
+  const custoM = (totW / 1000 * 8 * 30 * 0.92).toFixed(2);
+  set('kpi-total',   n);
+  set('kpi-pot',     totW + ' W');
+  set('kpi-custo-h', 'R$ ' + parseFloat(custoH).toFixed(2));
+  set('kpi-custo-m', 'R$ ' + custoM);
+}
+
+// ── KPIs da aba Monitoramento ───────────────────────────────────────
+function updateMonKPIs(watts) {
+  set('mon-devs', App.devices.length);
+  if (watts != null) {
+    set('mon-watts', watts + ' W');
+    const c = (watts / 1000 * 0.92).toFixed(4);
+    set('mon-cost',  'R$ ' + parseFloat(c).toFixed(2));
+    set('mon-cost-formula', `(${watts} ÷ 1000) × 0,92`);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SIMULADOR DE TELEMETRIA (ADMIN)
+// ══════════════════════════════════════════════════════════════════
+function buildSimPayload() {
+  const device = App.devices.length
+    ? App.devices[App.devices.length - 1].nome
+    : 'Aparelho de Teste';
+  const consumo_w = Math.floor(Math.random() * (2500 - 100 + 1)) + 100;
+  return {
+    tipo:       'telemetria_iot',
+    email:      App.user?.email || '',
+    dispositivo: device,
+    voltagem:   220,
+    consumo_w,
+    status:     'Ativo',
+    timestamp:  new Date().toISOString(),
+    idempotency_key: makeIdempotencyKey('tele'),
+    metadata: {
+      origem:              'EletroUni — Simulador',
+      corrente_a:          parseFloat((consumo_w / 220).toFixed(2)),
+      fator_potencia:      0.92,
+      kwh_estimado_hora:   parseFloat((consumo_w / 1000).toFixed(3)),
+    },
+  };
+}
+
+async function simTelemetria() {
+  const url = URL_TELEMETRIA;
+  if (!url || !url.startsWith('http')) {
+    toast('Configure URL_TELEMETRIA no código.', 'warn');
+    addLog('warn', 'URL_TELEMETRIA não configurada.');
+    updateSyncStatus('tele', false, null);
+    return;
+  }
+
+  const btn = document.getElementById('btn-sim');
+  const txt = document.getElementById('sim-btn-txt');
+  const ic  = document.getElementById('sim-ic');
+  const dot = document.getElementById('sim-dot');
+
+  const setLoad = (msg) => {
+    btn.disabled = true;
+    btn.style.background = 'linear-gradient(135deg,#5b21b6,#4c1d95)';
+    btn.style.boxShadow  = 'none';
+    txt.textContent = msg;
+    ic.innerHTML = `<circle cx="7.5" cy="7.5" r="5" fill="none" stroke="currentColor"
+      stroke-width="1.6" stroke-dasharray="14 8"
+      style="animation:spin .85s linear infinite;transform-origin:center;"/>`;
+  };
+  const setReady = () => {
+    btn.disabled = false;
+    btn.style.background = 'linear-gradient(135deg,var(--violet),var(--violet2))';
+    btn.style.boxShadow  = '0 0 22px rgba(168,85,247,.3),0 4px 16px rgba(0,0,0,.4)';
+    txt.textContent = 'Simular Telemetria';
+    ic.innerHTML = `<path d="M8 2v3M8 11v3M2 8h3M11 8h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.8"/>`;
+  };
+
+  setLoad('Enviando...');
+  setSimStatus('sending', '⏳ Enviando telemetria...');
+  iaThinking();
+  dot.style.background = 'var(--amber)'; dot.style.boxShadow = '0 0 6px var(--amber)'; dot.style.animation = 'none';
+
+  const payload = buildSimPayload();
+  App.sim.last  = payload;
+  document.getElementById('sim-preview').textContent = JSON.stringify(payload, null, 2);
+
+  updateMonKPIs(payload.consumo_w);
+  switchMonStatus('active');
+
+  try {
+    // ── POST ──────────────────────────────────────────────────────
+    const res = await fetchWithTiming(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    }, 'tele');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+
+    setSimStatus('ok', '✅ Dados recebidos!');
+    addLog('success', `Telemetria enviada — ${payload.dispositivo} · ${payload.consumo_w}W`);
+
+    // ── Lê resposta (analisar) ─────────────────────────────────────
+    setLoad('Processando...');
+    setSimStatus('sending', '⏳ IA analisando...');
+
+    let insight = null;
+    try {
+      const raw = await res.text();
+      if (raw && raw.trim()) {
+        try {
+          const parsed = JSON.parse(raw);
+          const fields = ['analisar','insight','message','texto','resultado','output','text'];
+          for (const f of fields) { if (parsed[f] && typeof parsed[f]==='string') { insight=parsed[f]; break; } }
+          if (!insight) insight = JSON.stringify(parsed, null, 2);
+        } catch { insight = raw.trim(); }
+      }
+    } catch {}
+
+    iaResult(insight, payload.dispositivo, payload.consumo_w);
+    toast(`Leitura: ${payload.consumo_w}W · IA respondeu`, 'success');
+
+    // Troca para aba Monitoramento automaticamente
+    const monBtn = document.getElementById('tab-btn-monitor');
+    if (monBtn && App.user?.isAdmin) {
+      switchTab('monitor', monBtn);
+    }
+
+  } catch (err) {
+    setSimStatus('err', '✗ ' + err.message);
+    addLog('error', 'Telemetria falhou: ' + err.message);
+    iaError(err.message);
+    toast('Erro: ' + err.message, 'error');
+    dot.style.background = 'var(--red)'; dot.style.boxShadow = '0 0 6px var(--red)';
+    switchMonStatus('error');
+  } finally {
+    setReady();
+    App.sim.count++;
+    App.sim.history.unshift({ n: App.sim.count, device: payload.dispositivo, w: payload.consumo_w, ts: new Date().toLocaleTimeString('pt-BR') });
+    if (App.sim.history.length > 20) App.sim.history.pop();
+    renderSimHist();
+    dot.style.background = 'var(--blue)'; dot.style.boxShadow = '0 0 8px var(--blue)'; dot.style.animation = 'pDot 2s infinite';
+  }
+}
+
+function setSimStatus(st, msg) {
+  const el = document.getElementById('sim-status');
+  const m  = {
+    sending: { bg:'rgba(251,191,36,.1)', border:'rgba(251,191,36,.3)', c:'var(--amber)' },
+    ok:      { bg:'rgba(74,222,128,.1)', border:'rgba(74,222,128,.3)', c:'var(--green)' },
+    err:     { bg:'rgba(248,113,113,.1)',border:'rgba(248,113,113,.3)',c:'var(--red)'   },
+  };
+  const cfg = m[st] || m.ok;
+  el.style.cssText = `display:inline-flex;align-items:center;gap:7px;padding:8px 13px;
+    border-radius:8px;font-size:.72rem;font-family:'JetBrains Mono',monospace;
+    background:${cfg.bg};border:1px solid ${cfg.border};color:${cfg.c};`;
+  el.textContent = msg;
+}
+
+function switchMonStatus(mode) {
+  const el = document.getElementById('mon-status-badge');
+  if (!el) return;
+  const map = {
+    idle:   { cls:'badge-blue',  t:'Aguardando' },
+    active: { cls:'badge-green', t:'Ativo' },
+    error:  { cls:'badge-red',   t:'Erro' },
+  };
+  const cfg = map[mode] || map.idle;
+  el.className = 'badge ' + cfg.cls;
+  el.textContent = cfg.t;
+}
+
+function renderSimHist() {
+  const wrap  = document.getElementById('sim-hist-wrap');
+  const list  = document.getElementById('sim-hist');
+  const badge = document.getElementById('sim-count-badge');
+  if (App.sim.history.length === 0) { wrap.style.display='none'; badge.style.display='none'; return; }
+  wrap.style.display='block'; badge.style.display='inline-flex';
+  badge.textContent = App.sim.count + (App.sim.count===1?' leitura':' leituras');
+  list.innerHTML = App.sim.history.map((h,i) => {
+    const bc = h.w>1800?'var(--red)':h.w>900?'var(--amber)':'var(--blue)';
+    const pct= Math.round((h.w/2500)*100);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;
+      border-radius:8px;border:1px solid var(--b);background:rgba(4,6,14,.6);
+      opacity:0;animation:rise .35s ${i*.04}s forwards;">
+      <span class="mono" style="font-size:.6rem;color:var(--dim);min-width:28px;text-align:right;">#${String(App.sim.count-i).padStart(2,'0')}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-size:.7rem;color:var(--muted);">${h.device}</span>
+          <span class="mono" style="font-size:.72rem;font-weight:700;color:${bc};">${h.w} W</span>
+        </div>
+        <div style="height:2px;background:var(--dim);border-radius:2px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${bc};border-radius:2px;box-shadow:0 0 4px ${bc}55;"></div>
+        </div>
+      </div>
+      <span style="font-size:.58rem;color:var(--dim);white-space:nowrap;">${h.ts}</span>
+    </div>`;
+  }).join('');
+}
+
+function copySimPayload() {
+  if (!App.sim.last) { toast('Gere uma leitura primeiro.','warn'); return; }
+  navigator.clipboard.writeText(JSON.stringify(App.sim.last,null,2))
+    .then(()=>toast('Payload copiado!','info'))
+    .catch(()=>toast('Erro ao copiar','error'));
+}
+
+function resetSim() {
+  App.sim = { count:0, history:[], last:null };
+  document.getElementById('sim-preview').textContent = 'Clique em "Simular Telemetria" para gerar...';
+  document.getElementById('sim-status').style.cssText = 'display:inline-flex;background:transparent;border:none;';
+  document.getElementById('sim-status').textContent = '';
+  const dot = document.getElementById('sim-dot');
+  dot.style.background = 'var(--dim)'; dot.style.boxShadow='none'; dot.style.animation='none';
+  renderSimHist();
+  addLog('info','Histórico do simulador resetado.');
+  toast('Simulador resetado','info');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// IA INSIGHT STATES
+// ══════════════════════════════════════════════════════════════════
+function iaThinking() {
+  const t = document.getElementById('ia-text');
+  if (t && t._ti) { clearInterval(t._ti); t._ti=null; }
+  document.getElementById('ia-ic-s').style.display    = 'none';
+  document.getElementById('ia-ic-spin').style.display = 'block';
+  document.getElementById('ia-badge').style.display   = 'none';
+  document.getElementById('ia-ts').textContent        = '';
+  document.getElementById('ia-idle').style.display    = 'none';
+  document.getElementById('ia-thinking').style.display= 'flex';
+  document.getElementById('ia-result').style.display  = 'none';
+  document.getElementById('ia-err').style.display     = 'none';
+}
+
+function iaResult(text, device, watts) {
+  document.getElementById('ia-ic-s').style.display    = 'block';
+  document.getElementById('ia-ic-spin').style.display = 'none';
+  document.getElementById('ia-thinking').style.display= 'none';
+  document.getElementById('ia-result').style.display  = 'block';
+  document.getElementById('ia-badge').style.display   = 'inline-flex';
+  document.getElementById('ia-ts').textContent        = new Date().toLocaleTimeString('pt-BR');
+
+  const display = (text && text.trim()) || `Leitura: ${device} · ${watts}W · R$ ${(watts/1000*0.92).toFixed(2)}/h`;
+  const el = document.getElementById('ia-text');
+  el.textContent = '';
+  let i = 0;
+  const speed = Math.max(10, Math.min(28, 1800 / display.length));
+  el._ti = setInterval(() => {
+    if (i >= display.length) { clearInterval(el._ti); el._ti=null; return; }
+    el.textContent += display[i++];
+  }, speed);
+  addLog('success', `IA Insight: ${display.slice(0,70)}${display.length>70?'…':''}`);
+}
+
+function iaError(msg) {
+  document.getElementById('ia-ic-s').style.display    = 'block';
+  document.getElementById('ia-ic-spin').style.display = 'none';
+  document.getElementById('ia-thinking').style.display= 'none';
+  document.getElementById('ia-result').style.display  = 'none';
+  document.getElementById('ia-err').style.display     = 'block';
+  document.getElementById('ia-err-txt').textContent   = '✗ ' + msg;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// LOG
+// ══════════════════════════════════════════════════════════════════
+function addLog(type, msg) {
+  const ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  App.logs.unshift({ type, msg, ts });
+  if (App.logs.length > 60) App.logs.pop();
+  const colors = {success:'var(--green)',info:'var(--blue)',warn:'var(--amber)',error:'var(--red)',action:'var(--violet)'};
+  const c = document.getElementById('event-log');
+  if (!c) return;
+  set('log-badge', App.logs.length);
+  c.innerHTML = App.logs.slice(0,14).map(l =>
+    `<div style="font-size:.67rem;line-height:1.7;font-family:'JetBrains Mono',monospace;color:${colors[l.type]||'var(--muted)'};">
+      <span style="color:var(--dim);">[${l.ts}]</span> ${l.msg}</div>`
+  ).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════
+function showUndoToast(msg, onUndo) {
+  const wrap = document.getElementById('toasts');
+  if (!wrap) return;
+  if (undoToastEl) { undoToastEl.remove(); undoToastEl = null; }
+  if (undoToastTimer) { clearTimeout(undoToastTimer); undoToastTimer = null; }
+
+  const el = document.createElement('div');
+  el.className = 'toast toast-info';
+  el.innerHTML = `<span>↩</span><span>${msg}</span>` +
+    `<button class="btn btn-outline btn-xs" type="button" style="margin-left:auto;">Desfazer</button>`;
+
+  const cleanup = () => {
+    if (undoToastEl) { undoToastEl.remove(); undoToastEl = null; }
+    if (undoToastTimer) { clearTimeout(undoToastTimer); undoToastTimer = null; }
+  };
+
+  const btn = el.querySelector('button');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      if (typeof onUndo === 'function') onUndo();
+      cleanup();
+    });
+  }
+
+  wrap.appendChild(el);
+  undoToastEl = el;
+  undoToastTimer = setTimeout(() => {
+    el.style.opacity='0'; el.style.transform='translateX(20px)';
+    el.style.transition='all .35s';
+    setTimeout(() => cleanup(), 380);
+    lastRemoved = null;
+  }, 4500);
+}
+
+function toast(msg, type='info') {
+  const wrap = document.getElementById('toasts');
+  const el   = document.createElement('div');
+  const icon = {success:'✅',error:'✗',warn:'⚠',info:'ℹ'}[type]||'ℹ';
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{
+    el.style.opacity='0'; el.style.transform='translateX(20px)';
+    el.style.transition='all .35s'; setTimeout(()=>el.remove(),380);
+  },3500);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════
+function set(id, val) { const el=document.getElementById(id); if(el) el.textContent=val; }
+
+// Init
+setupLiveValidation();
+setupFilters();
+const restored = restoreAppState();
+if (!restored) {
+  refreshEquipPreview();
+  renderDevicesGrid();
+  refreshDevKPIs();
+  updateMonKPIs();
+}
+</script>
+</body>
+</html>
